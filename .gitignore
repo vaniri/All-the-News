@@ -1,0 +1,8 @@
+# system
+.DS_Store
+
+# editor
+.vscode/
+
+# project
+node_modules/
