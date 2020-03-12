@@ -1,0 +1,18 @@
+<div id="news_container">
+  <div id="curNews_container">
+    {{#each news}}
+    <div class="news_info">
+      <h2>{{headline}}</h2>
+      <p class="news_p">{{author}}</p>
+      <p class="news_p">{{pubDate}}</p>
+      <p class="news_p">{{summary}}</p>
+      <a href="{{url}}">Read more....</a>
+    </div>
+    <div class="comment_container">
+      <input class="comment_input" type="text" id="username" name="username" placeholder="username" /><br>
+      <input class="comment_input" type="text" id="comment" name="comment" placeholder="leave a comment"/><br>
+      <button type="submit" id="add_user">LEAVE COMMENT</button>
+    </div>
+    {{/each}}
+  </div>
+</div>
