@@ -3,10 +3,13 @@ const { Schema } = mongoose;
 
 const NewsSchema = new Schema ({
     headline: String,
-    summary: String,
     author: String,
-    url: String,
-    img:  String
+    pubDate:  String,
+    summary: String,
+    url: {
+        type: String,
+        unique: true
+    }
 });
 
 const News = mongoose.model('News', NewsSchema);
