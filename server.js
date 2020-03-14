@@ -28,18 +28,30 @@ app.get("/", async (req, res) => {
     res.render("index", {});
 });
 
-
 //app routes
 app.route('/news')
     .get(async (req, res) => {
         try {
             let result = await db.News.find().lean();
-            res.render("news", { news: result });
+            res.render("allNews", { news: result });
         } catch (err) {
             console.log("Error find news", err);
             res.json({ message: "FAIL", reason: err });
         }
     })
+
+
+app.route('/news/:id')
+    .get(async (req, res) => {
+        try {
+            let news = await db.News.findOne({"_id": req.params.id}).lean();
+            let comments = await db.Comment.find({ newsItem: req.params.id }).populate("author").lean();
+            res.render("news", { ...news, comments });
+        } catch (err) {
+            console.log("Error find news or comments", err);
+            res.json({ message: "FAIL", reason: err });
+        }
+})
 
 app.route('/user')
     .get(async (req, res) => {
@@ -98,15 +110,6 @@ app.post('/login',
     })
 
 app.route('/comments')
-    .get(async (req, res) => {
-        try {
-            let result = await db.Comment.find();
-            res.json({ result });
-        } catch (err) {
-            console.log("Error find comments", err);
-            res.json({ message: "FAIL", reason: err });
-        }
-    })
     .post(
         expressJwt({ secret: jwtSecret }),
         async (req, res) => {
@@ -117,18 +120,7 @@ app.route('/comments')
                 console.log("Error creating comments", err);
                 res.json({ message: "FAIL", reason: err });
             }
-    });
-
-app.route('/comments/:id')
-    .get(async (req, res) => {
-        try {
-            let result = await db.Comment.find({ newsItem: req.params.id });
-            res.json({ result });
-        } catch (err) {
-            console.log("Error find comments", err);
-            res.json({ message: "FAIL", reason: err });
-        }
-    })
+        });
 
 async function getNews() {
     try {

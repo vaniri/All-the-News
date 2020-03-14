@@ -31,6 +31,7 @@ $("#login_form").on("submit", event => {
 
         localStorage.token = res.token;
         localStorage.username = username;
+        location.pathname = "/news";
     });
 })
 

@@ -1,6 +1,5 @@
 <div id="news_container">
   <div id="curNews_container">
-    {{#each news}}
     <div class="news_info">
       <h2>{{headline}}</h2>
       <p class="news_p">{{author}}</p>
@@ -9,14 +8,22 @@
       <a href="{{url}}">Read more....</a>
     </div>
     <div class="comment_container">
-      <form class="comment_form" data-newsid="{{_id}}">
-      <input class="comment" type="text" name="comment" placeholder="leave a comment"/><br>
-      <button type="submit" class="add_comment">LEAVE COMMENT</button>
-      </form>
+      <div id="show_comments">
+        {{#each comments}}
+        <h4 class="author">{{author.username}}</h4>
+        <p>{{commentBody}}</p>
+        <p>{{posted}}</p>
+        {{/each}}
+      </div>
+      <div id="leave_comment">
+        <form class="comment_form" data-newsid="{{_id}}">
+          <input class="comment" type="text" name="comment" placeholder="leave a
+            comment" /><br>
+          <button type="submit" class="add_comment">LEAVE COMMENT</button>
+        </form>
+      </div>
     </div>
-    {{/each}}
-     <div id="show_comments"></div>
   </div>
 </div>
 
-  <script src="/assets/js/news.js"></script>
+<script src="/assets/js/news.js"></script>

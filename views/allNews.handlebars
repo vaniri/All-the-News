@@ -1,0 +1,12 @@
+<div id="news_container">
+  <div id="curNews_container">
+    {{#each news}}
+    <div class="news_info">
+      <h2>{{headline}}</h2>
+      <a href="/news/{{_id}}">Read more....</a>
+    </div>
+    {{/each}}
+  </div>
+</div>
+
+  <script src="/assets/js/news.js"></script>
