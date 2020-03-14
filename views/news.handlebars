@@ -9,10 +9,14 @@
       <a href="{{url}}">Read more....</a>
     </div>
     <div class="comment_container">
-      <input class="comment_input" type="text" id="username" name="username" placeholder="username" /><br>
-      <input class="comment_input" type="text" id="comment" name="comment" placeholder="leave a comment"/><br>
-      <button type="submit" id="add_user">LEAVE COMMENT</button>
+      <form class="comment_form" data-newsid="{{_id}}">
+      <input class="comment" type="text" name="comment" placeholder="leave a comment"/><br>
+      <button type="submit" class="add_comment">LEAVE COMMENT</button>
+      </form>
     </div>
     {{/each}}
+     <div id="show_comments"></div>
   </div>
 </div>
+
+  <script src="/assets/js/news.js"></script>

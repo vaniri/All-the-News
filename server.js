@@ -3,6 +3,9 @@ const exphbs = require('express-handlebars');
 const path = require("path");
 const mongoose = require('mongoose');
 const db = require('./models');
+const argon2 = require('argon2');
+const jwt = require('jsonwebtoken');
+const expressJwt = require('express-jwt');
 let Parser = require('rss-parser');
 let parser = new Parser();
 
@@ -13,6 +16,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/news', {
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
@@ -49,13 +53,49 @@ app.route('/user')
     })
     .post(async (req, res) => {
         try {
+            console.log(req.body);
+            req.body.password = await argon2.hash(req.body.password);
             let result = await db.User.create(req.body);
-            res.json({ result });
+            let UserId = result.id;
+            res.json({ message: "OK", result, userId: UserId, token: makeToken(UserId) });
         } catch (err) {
             console.log("Error creating new user", err);
             res.json({ message: "FAIL", reason: err });
         }
     });
+
+
+const jwtSecret = "yo dawg i herd you like authorization";
+
+function makeToken(userId) {
+    return jwt.sign({ userId }, jwtSecret);
+}
+
+app.post('/login',
+    async (req, res) => {
+        try {
+            let user = await db.User.findOne({ username: req.body.username });
+            console.log(user);
+            if (!user) {
+                console.log("No user found!");
+                res.json({ message: "FAIL", reason: "No user found" });
+                return;
+            }
+
+            let passwordMatches = await argon2.verify(user.password, req.body.password);
+            if (!passwordMatches) {
+                console.log("Wrong password!");
+                res.json({ message: "FAIL", reason: "Wrong password!" });
+                return;
+            }
+
+            console.log("Login Successful!");
+            res.json({ message: "OK", userId: user.id, token: makeToken(user.id) });
+        } catch (err) {
+            console.log("Error logging in:", err);
+            res.json({ message: "FAIL", reason: err });
+        }
+    })
 
 app.route('/comments')
     .get(async (req, res) => {
@@ -67,14 +107,16 @@ app.route('/comments')
             res.json({ message: "FAIL", reason: err });
         }
     })
-    .post(async (req, res) => {
-        try {
-            let result = await db.Comment.create(req.body);
-            res.json({ result });
-        } catch (err) {
-            console.log("Error creating comments", err);
-            res.json({ message: "FAIL", reason: err });
-        }
+    .post(
+        expressJwt({ secret: jwtSecret }),
+        async (req, res) => {
+            try {
+                let result = await db.Comment.create({ ...req.body, author: req.user.userId });
+                res.json({ message: "OK", result });
+            } catch (err) {
+                console.log("Error creating comments", err);
+                res.json({ message: "FAIL", reason: err });
+            }
     });
 
 app.route('/comments/:id')
