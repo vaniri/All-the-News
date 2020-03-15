@@ -12,6 +12,7 @@ $("#create_user").on("submit", event => {
         if (res.message === "OK") {
             console.log(res);
             localStorage.token = res.token;
+            location.pathname = "/news";
         } else { alert("username or email is not available"); }
     })
 })
@@ -64,4 +65,16 @@ function displaycomment(message, username) {
     $("#show_comments").append('<div class="new_comment"></div>');
     $(".new_comment").append(`<h4 class="author">${username}</h4>`);
     $(".new_comment").append(`<p class="message">${message}</p>`);
- }
+}
+
+// slideshow
+$("#slideshow > div:gt(0)").hide();
+
+setInterval(function () {
+    $('#slideshow > div:first')
+        .fadeOut(1000)
+        .next()
+        .fadeIn(1000)
+        .end()
+        .appendTo('#slideshow');
+}, 2000);

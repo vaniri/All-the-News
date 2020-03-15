@@ -1,0 +1,73 @@
+
+#container{
+    display: flex;
+    margin: auto;
+    text-align: center;
+}
+
+#form_user_container {
+    margin: 2em 0;
+    padding: 0.5em;
+  
+}
+
+input {
+     margin: 0.3em 0;
+  width: 100%;
+  background-color: initial;
+  border: none;
+  border-bottom: 0.2px solid #6a9cbd;
+  color: white;
+  padding: 2px 0 10px 0;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+#add_user,
+#log_in, 
+#add_comment {
+  background-color: royalblue;
+  padding: 0.8em 3em;
+  margin: 1.5em auto;
+  border: none;
+  color: black;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#add_user:hover,
+#log_in:hover,
+#add_comment:hover   {
+  background-color: #1f1d1d;
+  color: white;
+  cursor: pointer;
+}
+
+#curNews_container {
+    margin: 2em;
+}
+
+.news_info{
+    margin: 1em;
+}
+
+#slideshow {
+
+    position: relative;
+    width: 70%; 
+    height: 600px;
+  }
+  
+  #slideshow > div {
+    position: absolute;
+    top: 2em;
+    left: 5px;
+    right: 0px;
+    bottom: 0px;
+  }
+  
+  .slideshow_img {
+    width: 80%;
+    max-height: 100%;
+  }
