@@ -1,24 +1,23 @@
 <div id="news_container">
   <div id="curNews_container">
     <div class="news_info">
-      <h2>{{headline}}</h2>
-      <p class="news_p">{{author}}</p>
-      <p class="news_p">{{pubDate}}</p>
+      <h2 class="headline">{{headline}}</h2>
+      <p class="news_author">{{author}}</p>
+      <p class="pubdate">{{pubDate}}</p>
       <p class="news_p">{{summary}}</p>
       <a href="{{url}}">Read more....</a>
     </div>
     <div class="comment_container">
       <div id="show_comments">
         {{#each comments}}
-        <h4 class="author">{{author.username}}</h4>
+        <h5 class="author" style="color: {{changeColor author.username}}">{{author.username}}</h5>
         <p>{{commentBody}}</p>
         <p>{{posted}}</p>
         {{/each}}
       </div>
       <div id="leave_comment">
         <form class="comment_form" data-newsid="{{_id}}">
-          <input class="comment" type="text" name="comment" placeholder="leave a
-            comment" /><br>
+          <input class="comment" type="text" name="comment" placeholder="leave a comment" /><br>
           <button type="submit" class="add_comment">LEAVE COMMENT</button>
         </form>
       </div>

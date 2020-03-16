@@ -66,15 +66,3 @@ function displaycomment(message, username) {
     $(".new_comment").append(`<h4 class="author">${username}</h4>`);
     $(".new_comment").append(`<p class="message">${message}</p>`);
 }
-
-// slideshow
-$("#slideshow > div:gt(0)").hide();
-
-setInterval(function () {
-    $('#slideshow > div:first')
-        .fadeOut(1000)
-        .next()
-        .fadeIn(1000)
-        .end()
-        .appendTo('#slideshow');
-}, 2000);
