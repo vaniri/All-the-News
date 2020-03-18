@@ -28,6 +28,7 @@ $("#login_form").on("submit", event => {
     $.post('/login', existUser, res => {
         if (res.message !== "OK") {
             console.log("Login failed: ", res.reason);
+            return;
         }
 
         localStorage.token = res.token;
@@ -65,4 +66,5 @@ function displaycomment(message, username) {
     $("#show_comments").append('<div class="new_comment"></div>');
     $(".new_comment").append(`<h4 class="author">${username}</h4>`);
     $(".new_comment").append(`<p class="message">${message}</p>`);
+    location.reload();
 }
