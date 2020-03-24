@@ -29,16 +29,30 @@ app.get("/", async (req, res) => {
     res.render("index", {});
 });
 
-app.route('/news')
+app.route('/source/:news')
     .get(async (req, res) => {
         try {
-            let result = await db.News.find().lean();
-            res.render("allNews", { news: result });
+            let news = await db.News.find({ "source": req.params.source }).lean();
+            let sourcesNames = await db.News.find().distinct("source").lean();
+            let sources = sourcesNames.map(name => ({ name }));
+            res.render("allNews", { sources: sources, news: news });
         } catch (err) {
             console.log("Error find news", err);
             res.json({ message: "FAIL", reason: err });
         }
     })
+
+app.route('/sources')
+.get(async (req, res) => {
+    try {
+        let sourcesNames = await db.News.find().distinct("source").lean();
+        let sources = sourcesNames.map(name => ({ name }));
+        res.render("Sources", { sources })
+    } catch (err) {
+        console.log("Error find source", err);
+        res.json({ message: "FAIL", reason: err });
+    }
+})
 
 
 app.route('/news/:id')
@@ -122,12 +136,32 @@ app.route('/comments')
             }
         });
 
-async function getNews() {
+
+async function getFeed() {
+    const urls = [
+        'http://feeds.foxnews.com/foxnews/latest',
+        'http://feeds.bbci.co.uk/news/world/rss.xml',
+        'https://news.ycombinator.com/rss'
+    ];
+    urls.forEach(async url => {
+        try {
+            const news = await parser.parseURL(url);
+            console.log(news.title);
+            insertNews(news);
+        } catch (error) {
+            console.log("Error updating feed", url, error);
+        }
+    });
+}
+
+getFeed();
+setInterval(getFeed, 100 * 1000);
+
+async function insertNews(news) {
     try {
-        let news = await parser.parseURL('http://feeds.foxnews.com/foxnews/latest');
         news.items.forEach(async (item) => {
             try {
-                await db.News.create({ "headline": item.title, "author": item.creator, "pubDate": item.pubDate, "summary": item.contentSnippet, "url": item.link });
+                await db.News.create({ "source": news.title, "headline": item.title, "author": item.creator, "pubDate": item.pubDate, "summary": item.contentSnippet, "url": item.link });
                 console.log(item);
             } catch (err) {
                 if (err.code !== 11000) { //11000 is the duplicate key error code
@@ -137,11 +171,8 @@ async function getNews() {
         });
     } catch (err) {
         console.log("Error find comments", err);
-        res.json({ message: "FAIL", reason: err });
     }
 }
-
-getNews();
 
 app.listen(process.env.PORT || 3000, () => {
     console.log('app listening at http://localhost:3000');
