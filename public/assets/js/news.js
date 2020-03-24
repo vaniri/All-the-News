@@ -12,7 +12,7 @@ $("#create_user").on("submit", event => {
         if (res.message === "OK") {
             console.log(res);
             localStorage.token = res.token;
-            location.pathname = "/news";
+            location.pathname = "/sources";
         } else { alert("username or email is not available"); }
     })
 })
@@ -33,7 +33,7 @@ $("#login_form").on("submit", event => {
 
         localStorage.token = res.token;
         localStorage.username = username;
-        location.pathname = "/news";
+        location.pathname = "/sources";
     });
 })
 

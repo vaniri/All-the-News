@@ -21,9 +21,11 @@
   <li class="nav-item">
      <a class="nav-link" href="/"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
   </li>
+   {{#each sources}}
   <li class="nav-item">
-  <a class="nav-link" href="/news">ALL NEWS</a>
+  <a class="nav-link" href="/source/{{name}}">{{name}}</a>
   </li>
+   {{/each}}
 </ul>
 
     {{{ body }}}
