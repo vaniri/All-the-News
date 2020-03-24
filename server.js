@@ -29,7 +29,7 @@ app.get("/", async (req, res) => {
     res.render("index", {});
 });
 
-app.route('/source/:news')
+app.route('/source/:source')
     .get(async (req, res) => {
         try {
             let news = await db.News.find({ "source": req.params.source }).lean();
@@ -43,16 +43,16 @@ app.route('/source/:news')
     })
 
 app.route('/sources')
-.get(async (req, res) => {
-    try {
-        let sourcesNames = await db.News.find().distinct("source").lean();
-        let sources = sourcesNames.map(name => ({ name }));
-        res.render("Sources", { sources })
-    } catch (err) {
-        console.log("Error find source", err);
-        res.json({ message: "FAIL", reason: err });
-    }
-})
+    .get(async (req, res) => {
+        try {
+            let sourcesNames = await db.News.find().distinct("source").lean();
+            let sources = sourcesNames.map(name => ({ name }));
+            res.render("Sources", { sources })
+        } catch (err) {
+            console.log("Error find source", err);
+            res.json({ message: "FAIL", reason: err });
+        }
+    })
 
 
 app.route('/news/:id')
@@ -79,7 +79,6 @@ app.route('/user')
     })
     .post(async (req, res) => {
         try {
-            console.log(req.body);
             req.body.password = await argon2.hash(req.body.password);
             let result = await db.User.create(req.body);
             let UserId = result.id;
@@ -141,12 +140,13 @@ async function getFeed() {
     const urls = [
         'http://feeds.foxnews.com/foxnews/latest',
         'http://feeds.bbci.co.uk/news/world/rss.xml',
-        'https://news.ycombinator.com/rss'
+        'https://news.ycombinator.com/rss',
+        'http://www.reddit.com/.rss',
+        'https://feeds.npr.org/510298/podcast.xml'
     ];
     urls.forEach(async url => {
         try {
             const news = await parser.parseURL(url);
-            console.log(news.title);
             insertNews(news);
         } catch (error) {
             console.log("Error updating feed", url, error);
@@ -162,7 +162,6 @@ async function insertNews(news) {
         news.items.forEach(async (item) => {
             try {
                 await db.News.create({ "source": news.title, "headline": item.title, "author": item.creator, "pubDate": item.pubDate, "summary": item.contentSnippet, "url": item.link });
-                console.log(item);
             } catch (err) {
                 if (err.code !== 11000) { //11000 is the duplicate key error code
                     throw err;
